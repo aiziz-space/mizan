@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ميزان</title>
+  <meta name="description" content="متابعة نزول الوزن والسعرات">
+  <meta name="theme-color" content="#f4f6f5" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#101413" media="(prefers-color-scheme: dark)">
+  <meta name="color-scheme" content="light dark">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="ميزان">
+  <meta name="format-detection" content="telephone=no">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar"><h1 id="title">اليوم</h1></header>
+
+  <main id="main">
+    <!-- اليوم -->
+    <section class="view" id="view-today" data-title="اليوم">
+      <div class="daynav">
+        <button class="icon-btn" id="day-prev" aria-label="اليوم السابق">›</button>
+        <button class="day-label" id="day-label"></button>
+        <button class="icon-btn" id="day-next" aria-label="اليوم التالي">‹</button>
+      </div>
+
+      <div class="card hero" id="hero">
+        <div class="hero-label" id="hero-label">باقي لك</div>
+        <div class="hero-num" id="hero-num">0</div>
+        <div class="hero-unit">سعرة</div>
+        <div class="ring"><div class="ring-fill" id="ring-fill"></div></div>
+        <div class="stats3">
+          <div><span class="s-num" id="st-goal">0</span><span class="s-lbl">الهدف</span></div>
+          <div><span class="s-num" id="st-food">0</span><span class="s-lbl">الأكل</span></div>
+          <div><span class="s-num" id="st-ex">0</span><span class="s-lbl" id="st-ex-lbl">الرياضة</span></div>
+        </div>
+      </div>
+
+      <div class="actions2">
+        <button class="btn primary big" id="btn-add-food">+ أكل</button>
+        <button class="btn secondary big" id="btn-add-act">+ نشاط</button>
+      </div>
+
+      <div class="card row-card" id="weight-card">
+        <div>
+          <div class="muted small">وزن اليوم</div>
+          <div class="weight-val" id="day-weight">—</div>
+        </div>
+        <button class="btn ghost" id="btn-weight">سجّل الوزن</button>
+      </div>
+
+      <h2 class="section-h">الأكل</h2>
+      <ul class="list" id="food-list"></ul>
+      <h2 class="section-h">النشاط</h2>
+      <ul class="list" id="act-list"></ul>
+    </section>
+
+    <!-- التقدم -->
+    <section class="view" id="view-progress" data-title="التقدم" hidden>
+      <div class="grid2" id="prog-stats"></div>
+      <div class="card">
+        <h2 class="card-h">الوزن</h2>
+        <div id="weight-chart" class="chart"></div>
+      </div>
+      <div class="card">
+        <h2 class="card-h">آخر 7 أيام: الأكل مقابل الهدف</h2>
+        <div id="week-chart" class="chart"></div>
+        <div class="legend"><span><i class="lg lg-ok"></i>ضمن الهدف</span><span><i class="lg lg-over"></i>فوق الهدف</span><span><i class="lg lg-goal"></i>الهدف</span></div>
+        <div class="muted small center" id="week-summary"></div>
+      </div>
+    </section>
+
+    <!-- قائمتي -->
+    <section class="view" id="view-meals" data-title="قائمتي" hidden>
+      <input type="search" class="input" id="meals-search" placeholder="ابحث في قائمتي…" autocomplete="off">
+      <ul class="list" id="meals-list"></ul>
+      <button class="btn primary big full" id="btn-new-meal">+ وجبة جديدة</button>
+    </section>
+
+    <!-- الإعدادات -->
+    <section class="view" id="view-settings" data-title="الإعدادات" hidden>
+      <div class="card">
+        <h2 class="card-h">الملف الشخصي</h2>
+        <div id="profile-summary" class="muted"></div>
+        <button class="btn secondary full" id="btn-edit-profile">تعديل الملف الشخصي</button>
+      </div>
+      <div class="card">
+        <h2 class="card-h">نسبة سعرات الرياضة المضافة للرصيد</h2>
+        <div class="seg" id="seg-ratio">
+          <button data-v="0">0%</button><button data-v="0.5">50%</button><button data-v="1">100%</button>
+        </div>
+        <p class="muted small">أجهزة التقدير غالباً تبالغ بسعرات الرياضة، عشان كذا الافتراضي 50%.</p>
+      </div>
+      <div class="card">
+        <h2 class="card-h">النسخ الاحتياطي</h2>
+        <button class="btn secondary full" id="btn-export">تصدير نسخة احتياطية</button>
+        <button class="btn secondary full" id="btn-import">استيراد نسخة احتياطية</button>
+        <input type="file" id="import-file" accept="application/json,.json" hidden>
+        <p class="muted small" id="persist-status"></p>
+      </div>
+      <div class="card">
+        <button class="btn danger full" id="btn-wipe">مسح كل البيانات</button>
+      </div>
+      <p class="muted small center">ميزان · بياناتك محفوظة في جهازك فقط</p>
+    </section>
+  </main>
+
+  <nav class="tabbar" id="tabbar">
+    <button data-view="today" class="active"><svg viewBox="0 0 24 24"><path d="M4 11.5 12 5l8 6.5V20a1 1 0 0 1-1 1h-5v-6h-4v6H5a1 1 0 0 1-1-1z"/></svg><span>اليوم</span></button>
+    <button data-view="progress"><svg viewBox="0 0 24 24"><path d="M4 19h16M6 16l4-5 3 3 5-7"/></svg><span>التقدم</span></button>
+    <button data-view="meals"><svg viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg><span>قائمتي</span></button>
+    <button data-view="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg><span>الإعدادات</span></button>
+  </nav>
+
+  <!-- Sheet (modal) -->
+  <div class="sheet-wrap" id="sheet-wrap" hidden>
+    <div class="sheet-backdrop" id="sheet-backdrop"></div>
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+      <div class="sheet-head">
+        <h2 id="sheet-title"></h2>
+        <button class="icon-btn" id="sheet-close" aria-label="إغلاق">✕</button>
+      </div>
+      <div class="sheet-body" id="sheet-body"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" hidden></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
