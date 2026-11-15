@@ -1,137 +1,115 @@
 <!doctype html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" data-theme="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>ميزان</title>
-  <meta name="description" content="متابعة نزول الوزن والسعرات">
-  <meta name="theme-color" content="#f4f6f5" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#101413" media="(prefers-color-scheme: dark)">
-  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="متابعة الوزن والسعرات والتمارين">
+  <meta name="theme-color" content="#0b0f0e">
+  <meta name="color-scheme" content="dark light">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="ميزان">
   <meta name="format-detection" content="telephone=no">
   <link rel="apple-touch-icon" href="icons/icon-180.png">
   <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
   <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preload" href="fonts/plex-arabic-700-arabic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
+  <script defer src="js/calc.js"></script>
+  <script defer src="js/data-exercises.js"></script>
+  <script defer src="js/data-programs.js"></script>
+  <script defer src="js/data-tips.js"></script>
+  <script defer src="js/icons.js"></script>
+  <script defer src="js/figure.js"></script>
+  <script defer src="js/store.js"></script>
+  <script defer src="js/timer.js"></script>
+  <script defer src="js/app.js"></script>
 </head>
 <body>
-  <header class="topbar"><h1 id="title">اليوم</h1></header>
+  <header class="topbar">
+    <div class="tb-text"><small id="subtitle"></small><h1 id="title">ميزان</h1></div>
+    <div class="streak" id="streak" aria-label="الأيام المتتالية"></div>
+  </header>
 
   <main id="main">
-    <!-- اليوم -->
-    <section class="view" id="view-today" data-title="اليوم">
-      <div class="daynav">
-        <button class="icon-btn" id="day-prev" aria-label="اليوم السابق">›</button>
-        <button class="day-label" id="day-label"></button>
-        <button class="icon-btn" id="day-next" aria-label="اليوم التالي">‹</button>
-      </div>
-
-      <div class="card hero" id="hero">
-        <div class="hero-label" id="hero-label">باقي لك</div>
-        <div class="hero-num" id="hero-num">0</div>
-        <div class="hero-unit">سعرة</div>
-        <div class="ring"><div class="ring-fill" id="ring-fill"></div></div>
-        <div class="stats3">
-          <div><span class="s-num" id="st-goal">0</span><span class="s-lbl">الهدف</span></div>
-          <div><span class="s-num" id="st-food">0</span><span class="s-lbl">الأكل</span></div>
-          <div><span class="s-num" id="st-ex">0</span><span class="s-lbl" id="st-ex-lbl">الرياضة</span></div>
-        </div>
-      </div>
-
-      <div class="actions2">
-        <button class="btn primary big" id="btn-add-food">+ أكل</button>
-        <button class="btn secondary big" id="btn-add-act">+ نشاط</button>
-      </div>
-
-      <div class="card row-card" id="weight-card">
-        <div>
-          <div class="muted small">وزن اليوم</div>
-          <div class="weight-val" id="day-weight">—</div>
-        </div>
-        <button class="btn ghost" id="btn-weight">سجّل الوزن</button>
-      </div>
-
-      <h2 class="section-h">الأكل</h2>
-      <ul class="list" id="food-list"></ul>
-      <h2 class="section-h">النشاط</h2>
-      <ul class="list" id="act-list"></ul>
-    </section>
-
-    <!-- التقدم -->
-    <section class="view" id="view-progress" data-title="التقدم" hidden>
-      <div class="grid2" id="prog-stats"></div>
-      <div class="card">
-        <h2 class="card-h">الوزن</h2>
-        <div id="weight-chart" class="chart"></div>
-      </div>
-      <div class="card">
-        <h2 class="card-h">آخر 7 أيام: الأكل مقابل الهدف</h2>
-        <div id="week-chart" class="chart"></div>
-        <div class="legend"><span><i class="lg lg-ok"></i>ضمن الهدف</span><span><i class="lg lg-over"></i>فوق الهدف</span><span><i class="lg lg-goal"></i>الهدف</span></div>
-        <div class="muted small center" id="week-summary"></div>
-      </div>
-    </section>
-
-    <!-- قائمتي -->
-    <section class="view" id="view-meals" data-title="قائمتي" hidden>
-      <input type="search" class="input" id="meals-search" placeholder="ابحث في قائمتي…" autocomplete="off">
-      <ul class="list" id="meals-list"></ul>
-      <button class="btn primary big full" id="btn-new-meal">+ وجبة جديدة</button>
-    </section>
-
-    <!-- الإعدادات -->
-    <section class="view" id="view-settings" data-title="الإعدادات" hidden>
-      <div class="card">
-        <h2 class="card-h">الملف الشخصي</h2>
-        <div id="profile-summary" class="muted"></div>
-        <button class="btn secondary full" id="btn-edit-profile">تعديل الملف الشخصي</button>
-      </div>
-      <div class="card">
-        <h2 class="card-h">نسبة سعرات الرياضة المضافة للرصيد</h2>
-        <div class="seg" id="seg-ratio">
-          <button data-v="0">0%</button><button data-v="0.5">50%</button><button data-v="1">100%</button>
-        </div>
-        <p class="muted small">أجهزة التقدير غالباً تبالغ بسعرات الرياضة، عشان كذا الافتراضي 50%.</p>
-      </div>
-      <div class="card">
-        <h2 class="card-h">النسخ الاحتياطي</h2>
-        <button class="btn secondary full" id="btn-export">تصدير نسخة احتياطية</button>
-        <button class="btn secondary full" id="btn-import">استيراد نسخة احتياطية</button>
-        <input type="file" id="import-file" accept="application/json,.json" hidden>
-        <p class="muted small" id="persist-status"></p>
-      </div>
-      <div class="card">
-        <button class="btn danger full" id="btn-wipe">مسح كل البيانات</button>
-      </div>
-      <p class="muted small center">ميزان · بياناتك محفوظة في جهازك فقط</p>
-    </section>
+    <section class="view" id="view-home"></section>
+    <section class="view" id="view-food" hidden></section>
+    <section class="view" id="view-train" hidden></section>
+    <section class="view" id="view-progress" hidden></section>
+    <section class="view" id="view-more" hidden></section>
   </main>
 
   <nav class="tabbar" id="tabbar">
-    <button data-view="today" class="active"><svg viewBox="0 0 24 24"><path d="M4 11.5 12 5l8 6.5V20a1 1 0 0 1-1 1h-5v-6h-4v6H5a1 1 0 0 1-1-1z"/></svg><span>اليوم</span></button>
-    <button data-view="progress"><svg viewBox="0 0 24 24"><path d="M4 19h16M6 16l4-5 3 3 5-7"/></svg><span>التقدم</span></button>
-    <button data-view="meals"><svg viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg><span>قائمتي</span></button>
-    <button data-view="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg><span>الإعدادات</span></button>
+    <button data-view="home" class="active"><svg class="ic" viewBox="0 0 24 24"><path d="M3.5 10.5 12 4l8.5 6.5"/><path d="M5.5 9v10.5h4.5V14h4v5.5h4.5V9"/></svg><span>الرئيسية</span></button>
+    <button data-view="food"><svg class="ic" viewBox="0 0 24 24"><path d="M6 3v7a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V3M8 12v9"/><path d="M17 21V3c-2.2 1.2-3.5 3.6-3.5 7v3h3.5"/></svg><span>الأكل</span></button>
+    <button data-view="train"><svg class="ic" viewBox="0 0 24 24"><path d="M6.5 6.5v11M3.5 9v6M17.5 6.5v11M20.5 9v6M6.5 12h11"/></svg><span>التمارين</span></button>
+    <button data-view="progress"><svg class="ic" viewBox="0 0 24 24"><path d="M4 20h16"/><path d="M5 16l4.5-5 3.5 3 6-7"/></svg><span>التقدم</span></button>
+    <button data-view="more"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.4M12 18.8v2.4M4.6 4.6l1.7 1.7M17.7 17.7l1.7 1.7M2.8 12h2.4M18.8 12h2.4M4.6 19.4l1.7-1.7M17.7 6.3l1.7-1.7"/></svg><span>الإعدادات</span></button>
   </nav>
 
-  <!-- Sheet (modal) -->
+  <!-- Bottom sheet -->
   <div class="sheet-wrap" id="sheet-wrap" hidden>
     <div class="sheet-backdrop" id="sheet-backdrop"></div>
     <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
-      <div class="sheet-head">
-        <h2 id="sheet-title"></h2>
-        <button class="icon-btn" id="sheet-close" aria-label="إغلاق">✕</button>
-      </div>
+      <div class="sheet-grip"></div>
+      <div class="sheet-head"><h2 id="sheet-title"></h2>
+        <button class="icon-btn" id="sheet-close" aria-label="إغلاق"><svg class="ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
       <div class="sheet-body" id="sheet-body"></div>
     </div>
   </div>
 
-  <div class="toast" id="toast" hidden></div>
+  <!-- Fullscreen workout timer -->
+  <div class="timer" id="timer" hidden>
+    <div class="t-top">
+      <button class="icon-btn glass" id="t-close" aria-label="إنهاء"><svg class="ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      <div class="t-title" id="t-title"></div>
+      <div class="t-left" id="t-left"></div>
+    </div>
+    <div class="t-progress"><i id="t-progress"></i></div>
+    <div class="t-kind-row"><span class="t-kind" id="t-kind"></span><span class="t-round" id="t-round"></span></div>
+    <div class="t-stage">
+      <svg class="t-ring" viewBox="0 0 240 240" aria-hidden="true">
+        <circle class="t-ring-bg" cx="120" cy="120" r="108"/>
+        <circle class="t-ring-fg" id="t-ring" cx="120" cy="120" r="108" stroke-dasharray="678.58" stroke-dashoffset="0" transform="rotate(-90 120 120)"/>
+      </svg>
+      <div class="t-fig" id="t-fig"></div>
+      <div class="t-time" id="t-time" aria-live="off">0</div>
+      <div class="t-paused-label">متوقف مؤقتاً</div>
+    </div>
+    <div class="t-name" id="t-name"></div>
+    <div class="t-hint" id="t-hint"></div>
+    <div class="t-next" id="t-next"></div>
+    <div class="t-controls">
+      <button class="icon-btn glass lg" id="t-prev-btn" aria-label="السابق"><svg class="ic" viewBox="0 0 24 24"><path d="m14.5 5 7 7-7 7M3 12h17"/></svg></button>
+      <button class="t-play" id="t-pause" aria-label="إيقاف مؤقت"></button>
+      <button class="icon-btn glass lg" id="t-next-btn" aria-label="التالي"><svg class="ic" viewBox="0 0 24 24"><path d="m9.5 5-7 7 7 7M21 12H4"/></svg></button>
+    </div>
+  </div>
 
-  <script src="app.js"></script>
+  <!-- Workout complete -->
+  <div class="celebrate" id="celebrate" hidden>
+    <div class="cel-card">
+      <div class="cel-badge"><svg viewBox="0 0 80 80"><circle class="cel-c" cx="40" cy="40" r="34"/><path class="cel-check" d="m24 41 11 11 22-24"/></svg></div>
+      <h2 id="cel-title"></h2>
+      <div class="cel-stats" id="cel-stats"></div>
+      <button class="btn primary big full" id="cel-ok">تم</button>
+    </div>
+  </div>
+
+  <!-- Dialog -->
+  <div class="dialog" id="dialog" hidden>
+    <div class="dialog-card" role="alertdialog" aria-labelledby="dialog-title">
+      <h2 id="dialog-title"></h2><p id="dialog-text"></p>
+      <div class="dialog-actions" id="dialog-actions"></div>
+    </div>
+  </div>
+
+  <div class="update-banner" id="update-banner" hidden>
+    <span>فيه تحديث جديد لميزان</span><button class="btn primary sm" id="update-reload">تحديث</button>
+  </div>
+  <div class="toast" id="toast" hidden></div>
+  <canvas id="fx" hidden></canvas>
 </body>
 </html>
